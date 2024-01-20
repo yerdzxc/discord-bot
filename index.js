@@ -17,16 +17,20 @@ client.on('ready', async () => {
 
     await client.application.commands.set([
         {
-            name: 'bind',
-            description: 'Bind your account!'
-        },
-        {
             name: 'time-in',
             description: 'Time In!'
         },
         {
             name: 'time-out',
             description: 'Time Out!'
+        },
+        {
+            name: 'attendance',
+            description: 'Todays Attendance List!'
+        },
+        {
+            name: 'bind',
+            description: 'Bind your account!'
         }
     ]);
 });
@@ -77,8 +81,16 @@ client.on('interactionCreate', async (interaction) => {
                 interaction.reply('An error occurred while logging timestamps., Please try again later or contact server admin! my bad my bad..  <:crying_cat:123456789012345678>');
             }
             break;
+        case 'attendance':
+            try {
+                const res = await axios.get(`${process.env.APP_URL}/attendance`);
+                interaction.reply(`${res.data}`);
+            } catch (err) {
+                console.error(err.response);
+                interaction.reply('An error occurred while fetching attendance., Please try again later or contact server admin! my bad my bad..  <:crying_cat:123456789012345678>');
+            }
+            break;
     }
 });
 
-// This line must be at the very end
 client.login(process.env.CLIENT_TOKEN);
