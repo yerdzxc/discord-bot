@@ -29,6 +29,10 @@ client.on('ready', async () => {
             description: 'Todays Attendance List!'
         },
         {
+            name: 'absent',
+            description: 'Todays Absent(s) List!'
+        },
+        {
             name: 'bind',
             description: 'Bind your account!'
         }
@@ -44,7 +48,6 @@ client.on('interactionCreate', async (interaction) => {
     member.nickname ? username = member.nickname : username = author.username;
     switch (commandName) {
         case 'bind':
-            console.log();
             try {
                 const res = await axios.post(`${process.env.APP_URL}/bind`, {
                     discordId: author.id,
@@ -90,6 +93,15 @@ client.on('interactionCreate', async (interaction) => {
             } catch (err) {
                 console.error(err.response);
                 interaction.reply('An error occurred while fetching attendance., Please try again later or contact server admin! my bad my bad..  <:crying_cat:123456789012345678>');
+            }
+            break;
+        case 'absent':
+            try {
+                const res = await axios.get(`${process.env.APP_URL}/absent`);
+                interaction.reply(`${res.data}`);
+            } catch (err) {
+                console.error(err.response);
+                interaction.reply('An error occurred while fetching absent(s)., Please try again later or contact server admin! my bad my bad..  <:crying_cat:123456789012345678>');
             }
             break;
     }
