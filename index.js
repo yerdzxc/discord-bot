@@ -38,15 +38,17 @@ client.on('ready', async () => {
 client.on('interactionCreate', async (interaction) => {
     if (!interaction.isCommand()) return;
     const { commandName } = interaction;
+    let username;
     const author = interaction.user;
     const member = interaction.guild.members.cache.get(author.id)
-
+    member.nickname ? username = member.nickname : username = author.username;
     switch (commandName) {
         case 'bind':
+            console.log();
             try {
                 const res = await axios.post(`${process.env.APP_URL}/bind`, {
                     discordId: author.id,
-                    username: member.nickname,
+                    username: username,
                     discriminator: author.discriminator
                 });
                 interaction.reply(`${res.data}`);
