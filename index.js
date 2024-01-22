@@ -61,7 +61,7 @@ client.on('interactionCreate', async (interaction) => {
             try {
                 const res = await axios.post(`${process.env.APP_URL}/set-time`, {
                     discordId: author.id,
-                    username: member.nickname,
+                    username: username,
                     command: 'time-in'
                 });
                 interaction.reply(`${res.data}`);
@@ -74,7 +74,7 @@ client.on('interactionCreate', async (interaction) => {
             try {
                 const res = await axios.post(`${process.env.APP_URL}/set-time`, {
                     discordId: author.id,
-                    username: member.nickname,
+                    username: username,
                     command: 'time-out'
                 });
                 interaction.reply(`${res.data}`);
