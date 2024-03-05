@@ -1,6 +1,7 @@
 require('dotenv').config();
 const { Client, GatewayIntentBits } = require('discord.js');
 const axios = require('axios');
+const commandsBuilder = require('./commands/commands.js');
 
 const client = new Client({
     intents: [
@@ -16,38 +17,7 @@ client.on('ready', async () => {
     console.log(`Logged in as ${client.user.tag}!`);
 
     await client.application.commands.set([
-        {
-            name: 'time-in',
-            description: 'Time In!'
-        },
-        {
-            name: 'time-out',
-            description: 'Time Out!'
-        },
-        {
-            name: 'attendance',
-            description: 'Todays Attendance List!'
-        },
-        {
-            name: 'absent',
-            description: 'Todays Absent(s) List!'
-        },
-        {
-            name: 'attendance-intern',
-            description: 'Interns Attendance List!'
-        },
-        {
-            name: 'absent-intern',
-            description: 'Interns Absent(s) List!'
-        },
-        {
-            name: 'bind',
-            description: 'Bind your account!'
-        },
-        {
-            name: 'bind-intern',
-            description: 'Bind your account!'
-        }
+        ...commandsBuilder
     ]);
 });
 
@@ -122,9 +92,29 @@ client.on('interactionCreate', async (interaction) => {
                 interaction.reply('An error occurred while fetching attendance., Please try again later or contact server admin! my bad my bad..  <:crying_cat:123456789012345678>');
             }
             break;
+        case 'attendance-by-date':
+            try {
+                const date = interaction.options.getString('date');
+                const res = await axios.get(`${process.env.APP_URL}/attendance-by-date?signature=${date}`);
+                interaction.reply(`${res.data}`);
+            } catch (err) {
+                console.error(err.response);
+                interaction.reply('An error occurred while fetching attendance., Please try again later or contact server admin! my bad my bad..  <:crying_cat:123456789012345678>');
+            }
+            break;
         case 'absent':
             try {
                 const res = await axios.get(`${process.env.APP_URL}/absent`);
+                interaction.reply(`${res.data}`);
+            } catch (err) {
+                console.error(err.response);
+                interaction.reply('An error occurred while fetching absent(s)., Please try again later or contact server admin! my bad my bad..  <:crying_cat:123456789012345678>');
+            }
+            break;
+        case 'absent-by-date':
+            try {
+                const date = interaction.options.getString('date');
+                const res = await axios.get(`${process.env.APP_URL}/absent-by-date?signature=${date}`);
                 interaction.reply(`${res.data}`);
             } catch (err) {
                 console.error(err.response);
