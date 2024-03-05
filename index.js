@@ -33,7 +33,19 @@ client.on('ready', async () => {
             description: 'Todays Absent(s) List!'
         },
         {
+            name: 'attendance-intern',
+            description: 'Interns Attendance List!'
+        },
+        {
+            name: 'absent-intern',
+            description: 'Interns Absent(s) List!'
+        },
+        {
             name: 'bind',
+            description: 'Bind your account!'
+        },
+        {
+            name: 'bind-intern',
             description: 'Bind your account!'
         }
     ]);
@@ -52,7 +64,22 @@ client.on('interactionCreate', async (interaction) => {
                 const res = await axios.post(`${process.env.APP_URL}/bind`, {
                     discordId: author.id,
                     username: username,
-                    discriminator: author.discriminator
+                    discriminator: author.discriminator,
+                    command: 'bind'
+                });
+                interaction.reply(`${res.data}`);
+            } catch (err) {
+                console.error(err.response);
+                interaction.reply('An error occurred while binding your account., Please try again later or contact server admin! my bad my bad.. <:crying_cat:123456789012345678>');
+            }
+            break;
+        case 'bind-intern':
+            try {
+                const res = await axios.post(`${process.env.APP_URL}/bind`, {
+                    discordId: author.id,
+                    username: username,
+                    discriminator: author.discriminator,
+                    command: 'bind-intern'
                 });
                 interaction.reply(`${res.data}`);
             } catch (err) {
@@ -98,6 +125,24 @@ client.on('interactionCreate', async (interaction) => {
         case 'absent':
             try {
                 const res = await axios.get(`${process.env.APP_URL}/absent`);
+                interaction.reply(`${res.data}`);
+            } catch (err) {
+                console.error(err.response);
+                interaction.reply('An error occurred while fetching absent(s)., Please try again later or contact server admin! my bad my bad..  <:crying_cat:123456789012345678>');
+            }
+            break;
+        case 'attendance-intern':
+            try {
+                const res = await axios.get(`${process.env.APP_URL}/attendance-intern`);
+                interaction.reply(`${res.data}`);
+            } catch (err) {
+                console.error(err.response);
+                interaction.reply('An error occurred while fetching attendance., Please try again later or contact server admin! my bad my bad..  <:crying_cat:123456789012345678>');
+            }
+            break;
+        case 'absent-intern':
+            try {
+                const res = await axios.get(`${process.env.APP_URL}/absent-intern`);
                 interaction.reply(`${res.data}`);
             } catch (err) {
                 console.error(err.response);
