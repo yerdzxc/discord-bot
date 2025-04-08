@@ -39,9 +39,7 @@ client.on('interactionCreate', async (interaction) => {
                     discriminator: author.discriminator,
                     command: 'bind'
                 };
-                const headers = {
-                    'x-signature': generateSignature(payload)
-                }
+                const headers = generateHeaders(payload);
                 if (!process.env.SIGNING_SECRET) {
                     interaction.reply('Signing secret required, contact server admin!. <:crying_cat:123456789012345678>')
                 };
@@ -63,9 +61,7 @@ client.on('interactionCreate', async (interaction) => {
                     discriminator: author.discriminator,
                     command: 'bind-intern'
                 };
-                const headers = {
-                    'x-signature': generateSignature(payload)
-                }
+                const headers = generateHeaders(payload);
                 if (!process.env.SIGNING_SECRET) {
                     interaction.reply('Signing secret required, contact server admin!. <:crying_cat:123456789012345678>')
                 };
@@ -86,9 +82,7 @@ client.on('interactionCreate', async (interaction) => {
                     username: username,
                     command: 'time-in'
                 };
-                const headers = {
-                    'x-signature': generateSignature(payload)
-                }
+                const headers = generateHeaders(payload);
                 if (!process.env.SIGNING_SECRET) {
                     interaction.reply('Signing secret required, contact server admin!. <:crying_cat:123456789012345678>')
                 };
@@ -109,9 +103,7 @@ client.on('interactionCreate', async (interaction) => {
                     username: username,
                     command: 'time-out'
                 };
-                const headers = {
-                    'x-signature': generateSignature(payload)
-                }
+                const headers = generateHeaders(payload);
                 if (!process.env.SIGNING_SECRET) {
                     interaction.reply('Signing secret required, contact server admin!. <:crying_cat:123456789012345678>')
                 };
@@ -127,9 +119,7 @@ client.on('interactionCreate', async (interaction) => {
             break;
         case 'attendance':
             try {
-                const headers = {
-                    'x-signature': generateSignature()
-                };
+                const headers = generateHeaders();
                 const res = await axios.get(`${process.env.APP_URL}/attendance`, { headers });
                 interaction.reply(`${res.data}`);
             } catch (err) {
@@ -142,9 +132,7 @@ client.on('interactionCreate', async (interaction) => {
             break;
         case 'attendance-by-date':
             try {
-                const headers = {
-                    'x-signature': generateSignature()
-                };
+                const headers = generateHeaders();
                 if (!process.env.SIGNING_SECRET) {
                     interaction.reply('Signing secret required, contact server admin!. <:crying_cat:123456789012345678>')
                 };
@@ -161,9 +149,7 @@ client.on('interactionCreate', async (interaction) => {
             break;
         case 'absent':
             try {
-                const headers = {
-                    'x-signature': generateSignature()
-                };
+                const headers = generateHeaders();
                 if (!process.env.SIGNING_SECRET) {
                     interaction.reply('Signing secret required, contact server admin!. <:crying_cat:123456789012345678>')
                 };
@@ -179,9 +165,7 @@ client.on('interactionCreate', async (interaction) => {
             break;
         case 'absent-by-date':
             try {
-                const headers = {
-                    'x-signature': generateSignature()
-                };
+                const headers = generateHeaders();
                 if (!process.env.SIGNING_SECRET) {
                     interaction.reply('Signing secret required, contact server admin!. <:crying_cat:123456789012345678>')
                 };
@@ -198,9 +182,7 @@ client.on('interactionCreate', async (interaction) => {
             break;
         case 'attendance-intern':
             try {
-                const headers = {
-                    'x-signature': generateSignature()
-                };
+                const headers = generateHeaders();
                 if (!process.env.SIGNING_SECRET) {
                     interaction.reply('Signing secret required, contact server admin!. <:crying_cat:123456789012345678>')
                 };
@@ -216,9 +198,7 @@ client.on('interactionCreate', async (interaction) => {
             break;
         case 'absent-intern':
             try {
-                const headers = {
-                    'x-signature': generateSignature()
-                };
+                const headers = generateHeaders();
                 if (!process.env.SIGNING_SECRET) {
                     interaction.reply('Signing secret required, contact server admin!. <:crying_cat:123456789012345678>')
                 };
@@ -235,14 +215,19 @@ client.on('interactionCreate', async (interaction) => {
     }
 });
 
-function generateSignature(payload) {
+function generateHeaders(payload) {
+    const timestamp = new Date().toISOString();
     const body = payload && Object.keys(payload).length > 0
         ? JSON.stringify(payload)
         : '';
-    return crypto
+    const signature = crypto
         .createHmac('sha256', `${process.env.SIGNING_SECRET}`)
-        .update(body)
+        .update(`${timestamp}:${body}`)
         .digest('hex');
+    return {
+        'x-signature': signature,
+        'x-signature-timestamp': timestamp
+    }
 }
 
 client.login(process.env.CLIENT_TOKEN);
