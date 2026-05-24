@@ -69,6 +69,14 @@ const exportCmd = new SlashCommandBuilder()
                 { name: 'Intern', value: 'intern' },
             ));
 
+const setName = new SlashCommandBuilder()
+    .setName('setname')
+    .setDescription('Set your display name for attendance')
+    .addStringOption(option =>
+        option.setName('name')
+            .setDescription('Your full name (e.g. Benjie Abrio)')
+            .setRequired(true));
+
 
 module.exports = [
     attendanceByDate.toJSON(),
@@ -81,5 +89,6 @@ module.exports = [
     absentIntern.toJSON(),
     bind.toJSON(),
     bindIntern.toJSON(),
-    exportCmd.toJSON()
+    exportCmd.toJSON(),
+    setName.toJSON()
 ];        

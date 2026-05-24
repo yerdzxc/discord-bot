@@ -229,7 +229,7 @@ client.on('interactionCreate', async (interaction) => {
                 const fromDate = from || fmt(monday);
                 const toDate = to || fmt(sunday);
 
-                const res = await axios.get(`${process.env.APP_URL}/api/export`, {
+                const res = await axios.get(`${process.env.APP_URL}/export`, {
                     params: { from: fromDate, to: toDate, type },
                     responseType: 'arraybuffer',
                 });
@@ -241,6 +241,28 @@ client.on('interactionCreate', async (interaction) => {
             } catch (err) {
                 console.error(err?.response?.data || err);
                 await interaction.editReply('An error occurred while exporting. Please try again or contact server admin!');
+            }
+            break;
+        case 'setname':
+            try {
+                const name = interaction.options.getString('name');
+                const author = interaction.user;
+                const member = interaction.guild.members.cache.get(author.id);
+                const username = member.nickname || author.username;
+
+                const payload = {
+                    discordId: author.id,
+                    username: name,
+                };
+                const headers = generateHeaders(payload);
+                const res = await axios.post(`${process.env.APP_URL}/set-name`, payload, { headers });
+                interaction.reply(`${res.data}`);
+            } catch (err) {
+                if (err.response?.status === 401) {
+                    interaction.reply('Invalid Signature, Please contact server admin!. <:crying_cat:123456789012345678>');
+                }
+                console.error(err?.response || err);
+                interaction.reply('An error occurred while updating your name. Please try again later!');
             }
             break;
     }
