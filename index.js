@@ -1,5 +1,5 @@
 require('dotenv').config();
-const { Client, GatewayIntentBits } = require('discord.js');
+const { Client, GatewayIntentBits, AttachmentBuilder } = require('discord.js');
 const axios = require('axios');
 const crypto = require('crypto');
 const commandsBuilder = require('./commands/commands.js');
@@ -210,6 +210,37 @@ client.on('interactionCreate', async (interaction) => {
                 }
                 console.error(err.response);
                 interaction.reply('An error occurred while fetching absent(s)., Please try again later or contact server admin! my bad my bad..  <:crying_cat:123456789012345678>');
+            }
+            break;
+        case 'export':
+            try {
+                await interaction.deferReply();
+                const from = interaction.options.getString('from');
+                const to = interaction.options.getString('to');
+                const type = interaction.options.getString('type') || 'employee';
+
+                const today = new Date();
+                const monday = new Date(today);
+                monday.setDate(today.getDate() - ((today.getDay() + 6) % 7));
+                const sunday = new Date(monday);
+                sunday.setDate(monday.getDate() + 6);
+
+                const fmt = (d) => d.toISOString().split('T')[0];
+                const fromDate = from || fmt(monday);
+                const toDate = to || fmt(sunday);
+
+                const res = await axios.get(`${process.env.APP_URL}/api/export`, {
+                    params: { from: fromDate, to: toDate, type },
+                    responseType: 'arraybuffer',
+                });
+
+                const attachment = new AttachmentBuilder(Buffer.from(res.data), {
+                    name: `KargaX Attendance ${fromDate} to ${toDate}.csv`
+                });
+                await interaction.editReply({ files: [attachment], content: `Export: ${fromDate} to ${toDate} (${type})` });
+            } catch (err) {
+                console.error(err?.response?.data || err);
+                await interaction.editReply('An error occurred while exporting. Please try again or contact server admin!');
             }
             break;
     }

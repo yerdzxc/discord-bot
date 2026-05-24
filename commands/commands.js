@@ -49,6 +49,26 @@ const bindIntern = new SlashCommandBuilder()
     .setName('bind-intern')
     .setDescription('Bind your account!');
 
+const exportCmd = new SlashCommandBuilder()
+    .setName('export')
+    .setDescription('Export attendance as CSV file')
+    .addStringOption(option =>
+        option.setName('from')
+            .setDescription('Start date (YYYY-MM-DD) - defaults to Monday this week')
+            .setRequired(false))
+    .addStringOption(option =>
+        option.setName('to')
+            .setDescription('End date (YYYY-MM-DD) - defaults to Sunday this week')
+            .setRequired(false))
+    .addStringOption(option =>
+        option.setName('type')
+            .setDescription('Employee or Intern')
+            .setRequired(false)
+            .addChoices(
+                { name: 'Employee', value: 'employee' },
+                { name: 'Intern', value: 'intern' },
+            ));
+
 
 module.exports = [
     attendanceByDate.toJSON(),
@@ -60,5 +80,6 @@ module.exports = [
     attendanceIntern.toJSON(),
     absentIntern.toJSON(),
     bind.toJSON(),
-    bindIntern.toJSON()
+    bindIntern.toJSON(),
+    exportCmd.toJSON()
 ];        
