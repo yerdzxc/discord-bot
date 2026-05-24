@@ -75,7 +75,11 @@ const setName = new SlashCommandBuilder()
     .addStringOption(option =>
         option.setName('name')
             .setDescription('Your full name (e.g. Benjie Abrio)')
-            .setRequired(true));
+            .setRequired(true))
+    .addUserOption(option =>
+        option.setName('user')
+            .setDescription('User to update (HR/admin only)')
+            .setRequired(false));
 
 
 module.exports = [

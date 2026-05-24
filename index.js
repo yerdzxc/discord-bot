@@ -246,12 +246,12 @@ client.on('interactionCreate', async (interaction) => {
         case 'setname':
             try {
                 const name = interaction.options.getString('name');
-                const author = interaction.user;
-                const member = interaction.guild.members.cache.get(author.id);
-                const username = member.nickname || author.username;
+                const targetUser = interaction.options.getUser('user') || interaction.user;
+                const member = interaction.guild.members.cache.get(targetUser.id);
+                const displayName = member?.nickname || targetUser.username;
 
                 const payload = {
-                    discordId: author.id,
+                    discordId: targetUser.id,
                     username: name,
                 };
                 const headers = generateHeaders(payload);
@@ -262,7 +262,7 @@ client.on('interactionCreate', async (interaction) => {
                     interaction.reply('Invalid Signature, Please contact server admin!. <:crying_cat:123456789012345678>');
                 }
                 console.error(err?.response || err);
-                interaction.reply('An error occurred while updating your name. Please try again later!');
+                interaction.reply('An error occurred while updating the name. Please try again later!');
             }
             break;
     }
