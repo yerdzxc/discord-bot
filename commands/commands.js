@@ -96,11 +96,13 @@ const overtime = new SlashCommandBuilder()
             .setMaxValue(8))
     .addStringOption(option =>
         option.setName('type')
-            .setDescription('Pre-shift (before shift) or Post-shift (after shift)')
+            .setDescription('Type of overtime')
             .setRequired(true)
             .addChoices(
-                { name: 'Post-shift', value: 'post' },
-                { name: 'Pre-shift', value: 'pre' },
+                { name: 'Post-shift (after shift)', value: 'post' },
+                { name: 'Pre-shift (before shift)', value: 'pre' },
+                { name: 'Rest Day', value: 'rd' },
+                { name: 'Holiday', value: 'holiday' },
             ))
     .addStringOption(option =>
         option.setName('reason')
