@@ -265,6 +265,34 @@ client.on('interactionCreate', async (interaction) => {
                 interaction.reply('An error occurred while updating the name. Please try again later!');
             }
             break;
+        case 'ot':
+            try {
+                const date = interaction.options.getString('date');
+                const hours = interaction.options.getNumber('hours');
+                const type = interaction.options.getString('type');
+                const reason = interaction.options.getString('reason');
+
+                const payload = {
+                    discordId: author.id,
+                    date,
+                    hours,
+                    type,
+                    note: reason || undefined,
+                };
+                const headers = generateHeaders(payload);
+                if (!process.env.SIGNING_SECRET) {
+                    interaction.reply('Signing secret required, contact server admin!. <:crying_cat:123456789012345678>')
+                };
+                const res = await axios.post(`${process.env.APP_URL}/overtime`, payload, { headers });
+                interaction.reply(`${res.data}`);
+            } catch (err) {
+                if (err.response?.status === 401) {
+                    interaction.reply('Invalid Signature, Please contact server admin!. <:crying_cat:123456789012345678>')
+                }
+                console.error(err?.response?.data || err);
+                interaction.reply('An error occurred while filing overtime. Please try again later!');
+            }
+            break;
     }
 });
 
